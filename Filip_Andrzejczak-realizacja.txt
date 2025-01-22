@@ -1,0 +1,333 @@
+CREATE DATABASE andrzejczak_filip CHARACTER SET utf8mb4 COLLATE utf8mb4_polish_ci;
+USE andrzejczak_filip;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `SprawdzDaty` (`data_rozpoczęcia` DATE, `data_zakończenia` DATE) RETURNS TINYINT(1)  BEGIN
+    DECLARE poprawne BOOLEAN;
+
+    IF data_zakończenia >= data_rozpoczęcia THEN
+        SET poprawne = TRUE;
+    ELSE
+        SET poprawne = FALSE;
+    END IF;
+
+    RETURN poprawne;
+END$$
+
+DELIMITER ;
+
+
+CREATE TABLE `firma` (
+  `Firma_id` int(11) NOT NULL,
+  `Nazwa_Firmy` varchar(50) NOT NULL,
+  `Adres` varchar(50) NOT NULL,
+  `Telefon` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+--
+-- Dumping data for table `firma`
+--
+
+INSERT INTO `firma` (`Firma_id`, `Nazwa_Firmy`, `Adres`, `Telefon`) VALUES
+(1, 'Apple. Inc', 'Cupertino, CA 95014 United States', '+1 (408) 996-1010'),
+(2, 'Google', 'Gordon House, Barrow Street Dublin 4 Ireland', '+1 (866) 246-6453'),
+(3, 'CD Projekt', 'Jagiellońska 74 E, 03-301 Warszawa', '+48 22 519 69 00'),
+(4, 'Samsung Electronics Polska Sp. z o.o.', 'ul. Postępu 14, 02-674 Warszawa', '+48 22 4600 500');
+
+
+CREATE TABLE `klienci` (
+  `Klient_id` int(11) NOT NULL,
+  `Imię` varchar(20) NOT NULL,
+  `Nazwisko` varchar(20) NOT NULL,
+  `Adres` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+INSERT INTO `klienci` (`Klient_id`, `Imię`, `Nazwisko`, `Adres`) VALUES
+(1, 'Adam', 'Nowak', 'ul. Klientowska 10'),
+(2, 'Ewa', 'Wiśniewska', 'al. inna 5'),
+(3, 'Brajan', 'Móżdzek', 'ul. Gigantów 155'),
+(4, 'Dżesika', 'Miotła', 'ul. pod złotymi łukami 55'),
+(5, 'Borys', 'Czeszewłochy', 'tulipanowa 5');
+
+
+CREATE TABLE `pracownicy` (
+  `pracownik_id` int(11) NOT NULL,
+  `firma_id` int(11) NOT NULL,
+  `Imię` varchar(20) NOT NULL,
+  `Nazwisko` varchar(20) NOT NULL,
+  `Stanowisko` varchar(20) NOT NULL,
+  `Data_zatrudnienia` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+
+INSERT INTO `pracownicy` (`pracownik_id`, `firma_id`, `Imię`, `Nazwisko`, `Stanowisko`, `Data_zatrudnienia`) VALUES
+(1, 1, 'Anna', 'Kowalska', 'Projektant UX', '2022-02-01'),
+(2, 1, 'Jan', 'Klucz', 'Programista', '2017-01-01'),
+(3, 1, 'Kamil', 'Średziński', 'Team Leader', '2022-07-01'),
+(4, 1, 'Filip', 'Bober', 'Programista JavaScri', '2019-09-01'),
+(5, 2, 'Wojciech', 'Ponczek', 'Programista', '2022-03-10'),
+(6, 2, 'Karol', 'Maszynik', 'Programista', '2021-04-01'),
+(7, 2, 'Wiktoria', 'Świderska', 'Projektant UX/UI', '2016-12-01'),
+(8, 2, 'Oliwia', 'Kositrawka', 'Programista', '2023-05-10'),
+(9, 3, 'Daniel', 'Buszka', 'Team Leader', '2020-03-01'),
+(10, 3, 'Kacper', 'Dupiszcz', 'Database Security', '2018-06-22'),
+(11, 3, 'Jakub', 'Hydrant', 'Website Manager', '2022-08-31'),
+(12, 3, 'Algierd', 'Zgerypała', 'Programista', '2024-02-01'),
+(13, 4, 'Dezydery', 'Muszka', 'Programista', '2022-12-28'),
+(14, 4, 'Kalina', 'Malina', 'projektant UX/UI', '2019-09-09'),
+(15, 4, 'Bartek', 'Bakłażan', 'Database Security Ma', '2015-01-05'),
+(17, 4, 'Elżbieta', 'Rumcajs', 'Team Leader', '2024-02-03');
+
+
+CREATE TABLE `pracownicy_projekty` (
+  `id` int(11) NOT NULL,
+  `pracownik_id` int(11) NOT NULL,
+  `projekty_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+
+INSERT INTO `pracownicy_projekty` (`id`, `pracownik_id`, `projekty_id`) VALUES
+(1, 1, 1),
+(2, 2, 1),
+(3, 1, 1),
+(4, 2, 1),
+(5, 3, 1),
+(6, 2, 2),
+(7, 3, 2),
+(8, 3, 3),
+(9, 4, 2),
+(10, 4, 3),
+(11, 4, 4),
+(12, 5, 4),
+(13, 12, 3),
+(14, 6, 2),
+(15, 8, 1),
+(16, 13, 3),
+(17, 1, 2),
+(18, 7, 2),
+(19, 14, 2),
+(20, 4, 3),
+(21, 3, 4),
+(22, 9, 4);
+
+CREATE TABLE `produkty` (
+  `Produkt_id` int(11) NOT NULL,
+  `Nazwa_produktu` varchar(20) NOT NULL,
+  `cena` int(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+INSERT INTO `produkty` (`Produkt_id`, `Nazwa_produktu`, `cena`) VALUES
+(1, 'Iphone 15 Pro Max 1T', 5699),
+(2, 'Iphone 14 256GB', 4099),
+(3, 'Iphone 15 256GB', 4799),
+(4, 'Iphone 13 256GB', 3799),
+(5, 'Iphone 12 Mini 64GB', 2899),
+(6, 'Iphone SE 2020 128GB', 2099),
+(7, 'Samsung S23 256GB', 3799),
+(8, 'Samsung S24 512GB', 5099),
+(9, 'Samsung S22 ULTRA 1T', 4699),
+(10, 'Google Pixel 8 8/128', 2898),
+(11, 'GOOGLE Pixel 6a 6/12', 1699),
+(12, 'Acer Chromebook Plus', 2499),
+(13, 'Cyberpunk 2077 Ultim', 211),
+(14, 'Cyberpunk 2077', 99),
+(15, 'Witcher 3 Wild Hunt', 30),
+(16, 'Witcher 1 Ultima', 535),
+(17, 'Witcher 2 ', 40),
+(18, 'Macbook Pro M2', 11499),
+(19, 'Macbook Pro M3 Max', 24999);
+
+
+CREATE TABLE `projekty` (
+  `Projekt_id` int(11) NOT NULL,
+  `Nazwa_projektu` varchar(255) NOT NULL,
+  `data_rozpoczęcia` date NOT NULL,
+  `data_zakończenia` date NOT NULL
+) ;
+
+
+INSERT INTO `projekty` (`Projekt_id`, `Nazwa_projektu`, `data_rozpoczęcia`, `data_zakończenia`) VALUES
+(1, 'Poprawienie Ochrony Bazy danych', '2023-08-01', '2023-11-23'),
+(2, 'Wprowadzenie nowej strony internetowej', '2022-04-01', '2023-05-31'),
+(3, 'Aplikacja mobilna', '2020-05-01', '2021-01-11'),
+(4, 'System CRM (Customer Relationship Management)', '2022-03-01', '2022-06-30');
+
+DELIMITER $$
+CREATE TRIGGER `przed_zmiana_projektu` BEFORE UPDATE ON `projekty` FOR EACH ROW BEGIN
+    IF NOT SprawdzDaty(projekty.data_rozpoczęcia, projekty.data_zakończenia) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Data zakończenia projektu nie może być wcześniejsza niż data rozpoczęcia';
+    END IF;
+END
+$$
+DELIMITER ;
+
+CREATE TABLE `widok_projekty` (
+`projekt_id` int(11)
+,`Nazwa_projektu` varchar(255)
+);
+
+
+CREATE TABLE `zlecenia` (
+  `Zlecenie_id` int(11) NOT NULL,
+  `klient_id` int(11) NOT NULL,
+  `Projekt_id` int(11) NOT NULL,
+  `Data_zlecenia` date NOT NULL,
+  `opis_zlecenia` varchar(200) NOT NULL,
+  `Kwota` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+INSERT INTO `zlecenia` (`Zlecenie_id`, `klient_id`, `Projekt_id`, `Data_zlecenia`, `opis_zlecenia`, `Kwota`) VALUES
+(1, 1, 3, '2020-05-10', 'Implementacja modułu', 25000),
+(2, 2, 1, '2023-09-11', 'Baza danych magazynu', 50000),
+(3, 3, 2, '2023-09-23', 'Strona internetowa o motylach w słoikach z modułem płatności przez internet (Bitcoin) ', 12500),
+(4, 4, 4, '2024-02-01', 'zestaw procedur i narzędzi istotnych w zarządzaniu kontaktami z klientami.', 19688);
+
+
+
+CREATE TABLE `zlecenia_produkty` (
+  `id` int(11) NOT NULL,
+  `zlecenie_id` int(11) NOT NULL,
+  `produkt_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+
+INSERT INTO `zlecenia_produkty` (`id`, `zlecenie_id`, `produkt_id`) VALUES
+(1, 4, 18),
+(2, 4, 19),
+(3, 4, 18),
+(4, 4, 19),
+(5, 4, 1),
+(6, 4, 2),
+(7, 4, 19),
+(8, 4, 19),
+(9, 4, 19),
+(10, 4, 19),
+(11, 4, 19),
+(12, 4, 8),
+(13, 2, 18),
+(14, 2, 19),
+(15, 2, 18),
+(16, 2, 19),
+(17, 2, 2),
+(18, 1, 19),
+(19, 1, 19),
+(20, 1, 1),
+(21, 1, 1),
+(22, 1, 18),
+(23, 3, 12),
+(24, 3, 12),
+(25, 3, 12),
+(26, 3, 19),
+(27, 3, 1);
+
+DROP TABLE IF EXISTS `widok_projekty`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `widok_projekty`  AS SELECT `projekty`.`Projekt_id` AS `projekt_id`, `projekty`.`Nazwa_projektu` AS `Nazwa_projektu` FROM `projekty` ;
+
+ALTER TABLE `firma`
+  ADD PRIMARY KEY (`Firma_id`);
+
+ALTER TABLE `klienci`
+  ADD PRIMARY KEY (`Klient_id`);
+
+ALTER TABLE `pracownicy`
+  ADD PRIMARY KEY (`pracownik_id`),
+  ADD KEY `Firma_id` (`firma_id`);
+
+ALTER TABLE `pracownicy_projekty`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pracownik_id` (`pracownik_id`),
+  ADD KEY `projekty_id` (`projekty_id`);
+
+ALTER TABLE `produkty`
+  ADD PRIMARY KEY (`Produkt_id`),
+  ADD KEY `idx_Hash` (`Nazwa_produktu`) USING HASH;
+
+ALTER TABLE `projekty`
+  ADD PRIMARY KEY (`Projekt_id`),
+  ADD UNIQUE KEY `UC_Nazwa_projektu` (`Nazwa_projektu`),
+  ADD KEY `idx_Btree_Nazwa_projektu` (`Nazwa_projektu`);
+
+ALTER TABLE `zlecenia`
+  ADD PRIMARY KEY (`Zlecenie_id`),
+  ADD KEY `Klient_id` (`klient_id`),
+  ADD KEY `Projekt_id` (`Projekt_id`);
+
+ALTER TABLE `zlecenia_produkty`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `produkt_id` (`produkt_id`),
+  ADD KEY `zlecenie_id` (`zlecenie_id`);
+
+ALTER TABLE `firma`
+  MODIFY `Firma_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+ALTER TABLE `klienci`
+  MODIFY `Klient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+ALTER TABLE `pracownicy`
+  MODIFY `pracownik_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+ALTER TABLE `pracownicy_projekty`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+ALTER TABLE `produkty`
+  MODIFY `Produkt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+ALTER TABLE `projekty`
+  MODIFY `Projekt_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `zlecenia`
+  MODIFY `Zlecenie_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+ALTER TABLE `zlecenia_produkty`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+ALTER TABLE `pracownicy`
+  ADD CONSTRAINT `Firma_id` FOREIGN KEY (`firma_id`) REFERENCES `firma` (`Firma_id`);
+
+ALTER TABLE `pracownicy_projekty`
+  ADD CONSTRAINT `pracownik_id` FOREIGN KEY (`pracownik_id`) REFERENCES `pracownicy` (`pracownik_id`),
+  ADD CONSTRAINT `projekty_id` FOREIGN KEY (`projekty_id`) REFERENCES `projekty` (`Projekt_id`);
+
+ALTER TABLE `zlecenia`
+  ADD CONSTRAINT `Klient_id` FOREIGN KEY (`klient_id`) REFERENCES `klienci` (`Klient_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `Projekt_id` FOREIGN KEY (`Projekt_id`) REFERENCES `projekty` (`Projekt_id`) ON UPDATE CASCADE;
+
+ALTER TABLE `zlecenia_produkty`
+  ADD CONSTRAINT `produkt_id` FOREIGN KEY (`produkt_id`) REFERENCES `produkty` (`Produkt_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `zlecenie_id` FOREIGN KEY (`zlecenie_id`) REFERENCES `zlecenia` (`Zlecenie_id`) ON UPDATE CASCADE;
+
+UPDATE `pracownicy` SET `Stanowisko` = 'Programista JavaScript' WHERE `pracownicy`.`pracownik_id` = 4;
+DELETE FROM pracownicy WHERE `pracownicy`.`pracownik_id` = 16;
+INSERT INTO `pracownicy` (`pracownik_id`, `firma_id`, `Imię`, `Nazwisko`, `Stanowisko`, `Data_zatrudnienia`) VALUES (NULL, '4', 'Elżbieta', 'Rumcajs', 'Team Leader', '2024-02-03');
+INSERT IGNORE INTO klienci (Klient_id, Imię, Nazwisko, adres) VALUES (NULL,'Borys','Czeszewłochy','tulipanowa 5');
+
+
+CREATE USER 'mafiaboss'@'localhost' IDENTIFIED BY 'mafiaboss_password';
+CREATE USER 'manager'@'localhost' IDENTIFIED BY 'manager_password';
+CREATE USER 'peasant'@'localhost' IDENTIFIED BY 'peasant_password';
+
+GRANT ALL PRIVILEGES ON *.* TO 'mafiaboss'@'localhost';
+
+GRANT SELECT, INSERT, UPDATE ON andrzejczak_filip.* TO 'manager'@'localhost';
+
+GRANT SELECT ON andrzejczak_filip.zlecenia TO 'peasant'@'localhost';
+
+
+CREATE VIEW widok_projekty AS SELECT projekt_id, Nazwa_projektu FROM projekty;
+GRANT SELECT ON andrzejczak_filip.widok_projekty TO 'manager'@'localhost';
+
+CREATE TABLE Tabela_Klucz_Z2 (
+    intedżer INT,
+    varczar VARCHAR(50),
+    PRIMARY KEY (intedżer, varczar)
+);
+
+DROP TABLE tabela_klucz_z2;
+COMMIT;
